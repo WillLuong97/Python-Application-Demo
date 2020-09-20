@@ -8,7 +8,36 @@ import json
 import requests
 import urllib.parse
 
-def authenticateUser(username, password):
+class RequestListner(BaseHTTPRequestHandler):
+    def doPost(self):
+        #function to listen for a POST request from the Front-end
+        path = self.path
+
+        #Displaying the header of the path being sent in
+        print("Headers: ", self.headers, "")
+        print("Domain: ", self.headers['host'])
+
+        #Displaying the type of the content in the request
+        print("Content-Type: ", self.headers['Content-type'])
+
+        #Collecting the length of the body read the characters that are contained in the body
+        length = int(self.headers['body-length'])
+        body = self.rfile.read(length)
+
+        #convert the body of the requets into a dictionary for easier handling
+        incoming_dictionary = json.loads(body)
+        #for debugging
+        print("Incoming Dictionary: " + str(incoming_dictionary))
+
+        #handling a registration from POST
+        if path == "api/cs/login":
+            print("Login API:")
+            response = authenticateUser(incoming_dictionary)
+        
+
+
+
+def authenticateUser(dictionary):
     # #Dictionary to store a list of valid username and password
     users = {"tonyHawk98": "iAmIronMan", 
              "John_Doe": "thisIsME09",
@@ -35,8 +64,21 @@ def authenticateUser(username, password):
     #     print("Invalid Credentials")
 
 
+#main function to execute and run the server
 def main():
-    #This function is empty because it is not yet ready
-    pass
- 
-main()
+    #Server port
+    port = 8000
+
+    #Create server
+    httpServer = http.server.HTTPServer(('', port), RequestListner)
+    print("Request Listener is running on port", port)
+
+    #start server, and shut it off by key interuption
+    try: 
+        httpServer.serve_forever()
+    except KeyboardInterrupt:
+        httpServer.server_close()
+        print("Request handler has closed!")
+
+if __name__ == "__main__":
+    main()
