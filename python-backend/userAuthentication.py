@@ -2,6 +2,12 @@
 #Taking a user input of username and password from the front end and then match if the input credentials 
 #is valid or not. Display an error message if the credentials are wrong or send the user to a success page if the credential works
 
+import http.server
+from http.server import BaseHTTPRequestHandler
+import json
+import requests
+import urllib.parse
+
 def authenticateUser(username, password):
     # #Dictionary to store a list of valid username and password
     users = {"tonyHawk98": "iAmIronMan", 
@@ -29,9 +35,8 @@ def authenticateUser(username, password):
     #     print("Invalid Credentials")
 
 
-    
 def main():
-
-    authenticateUser("tonyHawk98", "iAmIronMan")
-
+    #This function is empty because it is not yet ready
+    pass
+ 
 main()
