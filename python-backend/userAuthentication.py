@@ -32,42 +32,77 @@ class RequestListner(BaseHTTPRequestHandler):
         #handling a registration from POST
         if path == "api/cs/login":
             print("Login API:")
-            response = authenticateUser(incoming_dictionary)
+            #the function will return a response back if the user crendential match
+            response = self.authenticateUser(incoming_dictionary)
+            #if there is a response back: 
+            if response:
+                self.respond_convert_json_object(200, response)
+
+            else: 
+                self.respond_code(403, "Credentials were not found")
+        #connection error and no request of this connection were found
+        else:
+            #if the path did not match any request
+            # a 404 Not found error is thrown
+            print("api/cs failed")
+            self.respond_code(404, 'Path did not match any known request!')
+
+    # Converts python dictionary into a json object and sends it with a code
+    def respond_convert_json_object (self, code, dictionary):
+        # Define the response code and the headers
+        self.send_response(code)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header("Access-Control-Allow-Origin", "*")
+
+        # Signify that you are done sending the headers:
+        self.end_headers()
         
-
-
-
-def authenticateUser(dictionary):
-    # #Dictionary to store a list of valid username and password
-    users = {"tonyHawk98": "iAmIronMan", 
-             "John_Doe": "thisIsME09",
-             "Thor69": "Changeme04!"}
-
-    for key, value in users.items():
-        if key == username and value == password:
-            print("Valid credential")
-            break
-        else: 
-            print("Invalid credential")
-            break
-
-    # if username == "tonyHawk98" and password == "iAmIronMan":
-    #     print("Valid Credential")
+        # convert python dictionary into a JSON object
+        # encode json_object into utf_8
+        self.wfile.write(json.dumps(dictionary).encode(encoding='utf_8'))
     
-    # elif username == "John_Doe" and password == "thisIsME09":
-    #     print("Valid Credential")
+    # Responds with a simple code and response
+    def respond_code (self, code, response):
+        self.send_response(code)
+        self.end_headers()
+        bytesStr = response.encode('utf-8')
+        self.wfile.write(bytesStr)
 
-    # elif username == "Thor69" and password == "Changeme04!":
-    #     print("Valid Credential")
+    #function to take in a dictionary of user credentials and authenticate it.
+    def authenticateUser(self, dictionary):
+        # #Dictionary to store a list of valid username and password
+        users = {"tonyHawk98": "iAmIronMan", 
+                "John_Doe": "thisIsME09",
+                "Thor69": "Changeme04!"}
+        #getting the username and password out from the dictionary
+        username = dictionary["username"]
+        password = dictionary["password"]
 
-    # else: 
-    #     print("Invalid Credentials")
+        for key, value in users.items():
+            if key == username and value == password:
+                print("Valid credential")
+                break
+            else: 
+                print("Invalid credential")
+                break
+
+        # if username == "tonyHawk98" and password == "iAmIronMan":
+        #     print("Valid Credential")
+        
+        # elif username == "John_Doe" and password == "thisIsME09":
+        #     print("Valid Credential")
+
+        # elif username == "Thor69" and password == "Changeme04!":
+        #     print("Valid Credential")
+
+        # else: 
+        #     print("Invalid Credentials")
 
 
 #main function to execute and run the server
 def main():
     #Server port
-    port = 8000
+    port = 8080
 
     #Create server
     httpServer = http.server.HTTPServer(('', port), RequestListner)
