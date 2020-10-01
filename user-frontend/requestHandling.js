@@ -4,7 +4,7 @@ console.log("Running requestHandling.js!");
 function send_login_demand(login_dictionary){
     //API key for connection to the server
     console.log("Sending user crendentials for authentication...")
-    var url = 'api/cs/login'; 
+    var url = 'http://localhost:8080/api/cs/login'; 
     var jsonObject = JSON.stringify(login_dictionary);
 
     //Open a connection to the server
